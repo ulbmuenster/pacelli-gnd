@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:head/>
+<h:body>
+    <h:form id="contentForm"
+            enctype="multipart/form-data">
+        <f:websocket channel="marc-authority-editor">
+            <f:ajax event="updateNotification" render=":notification" />
+        </f:websocket>
+
+        <p:tabView>
+            <p:tab title="Offene Normdaten">
+                <p:dataTable id="tasksTable"
+                             var="task"
+                             value="#{taskListView.lazyModel}"
+                             paginator="true"
+                             lazy="true"
+                             paginatorAlwaysVisible="false"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,25,50,100"
+                             currentPageReportTemplate="{currentPage} von {totalPages}"
+                             rows="10"
+                             selectionMode="single"
+                             selection="#{taskListView.selectedDatabaseEntry}"
+                             editable="true"
+                             editMode="cell"
+                             rowKey="#{task.id}"
+                             multiViewState="true">
+                    <p:ajax event="cellEdit"
+                            listener="#{taskListView.onNotesEdited}" />
+                    <p:column headerText="Pacelli-ID"
+                              sortBy="#{task.id}">
+                        <h:outputLink value="http://www.pacelli-edition.de/Biographie/#{task.id}"
+                                      target="_blank">
+                            #{task.id}
+                        </h:outputLink>
+                    </p:column>
+                    <p:column headerText="Gnd-Id"
+                              sortBy="#{task.gndId}">
+                        <h:outputText value="#{task.gndId}"/>
+                        <h:panelGroup rendered="#{not empty task.pnGndId}">
+                            <h:outputText value="PN-Satz: #{task.pnGndId}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column headerText="Nachname"
+                              sortBy="#{task.lastName}"
+                              filterBy="#{task.lastName}">
+                        <h:outputText value="#{task.lastName}"/>
+                    </p:column>
+                    <p:column headerText="Vorname"
+                              filterBy="#{task.firstName}">
+                        <h:outputText value="#{task.firstName}"/>
+                    </p:column>
+                    <p:column headerText="Level"
+                              sortBy="#{task.gndLevel}">
+                        <h:outputText value="#{task.gndLevel}"/>
+                    </p:column>
+                    <p:column headerText="Anmerkung"
+                              filterBy="#{task.notes}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{task.notes}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputTextarea value="#{task.notes}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column style="width:32px;text-align: center">
+                        <p:commandButton icon="fa fa-fw fa-edit"
+                                         actionListener="#{taskListView.setEditedDatabaseEntry(task)}"
+                                         title="Bearbeiten">
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+            <p:tab title="Bearbeitete Normdaten">
+                <p:dataTable id="editedTable"
+                             var="edited"
+                             value="#{taskListView.lazyEditedModel}"
+                             paginator="true"
+                             lazy="true"
+                             paginatorAlwaysVisible="false"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,25,50,100"
+                             currentPageReportTemplate="{currentPage} von {totalPages}"
+                             rows="25"
+                             selectionMode="single"
+                             selection="#{taskListView.selectedEditedDatabaseEntry}"
+                             multiViewState="true">
+                    <p:ajax event="rowSelect"
+                            listener="#{taskListView.onEditedRowSelect}"
+                            update="@form"/>
+                    <p:column headerText="Pacelli-ID"
+                              sortBy="#{edited.id}">
+                        <h:outputLink value="http://www.pacelli-edition.de/Biographie/#{edited.id}"
+                                      target="_blank">
+                            #{edited.id}
+                        </h:outputLink>
+                    </p:column>
+                    <p:column headerText="Gnd-Id"
+                              sortBy="#{edited.gndId}">
+                        <h:outputText value="#{edited.gndId}"/>
+                        <h:panelGroup rendered="#{not empty edited.pnGndId}">
+                            <h:outputText value="PN-Satz: #{edited.pnGndId}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column headerText="Nachname"
+                              sortBy="#{edited.lastName}"
+                              filterBy="#{edited.lastName}">
+                        <h:outputText value="#{edited.lastName}"/>
+                    </p:column>
+                    <p:column headerText="Vorname"
+                              filterBy="#{edited.firstName}">
+                        <h:outputText value="#{edited.firstName}"/>
+                    </p:column>
+                    <p:column headerText="Level"
+                              sortBy="#{task.gndLevel}">
+                        <h:outputText value="#{edited.gndLevel}"/>
+                    </p:column>
+                    <p:column headerText="Anmerkung"
+                              filterBy="#{task.notes}">
+                        <h:outputText value="#{task.notes}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
+    </h:form>
+
+    <p:outputPanel id="notification">
+        <p:fieldset rendered="#{taskListView.renderNotification}"
+                    legend="Nachrichten">
+            <h:outputText value="#{taskListView.notification}" />
+        </p:fieldset>
+    </p:outputPanel>
+</h:body>
+</html>

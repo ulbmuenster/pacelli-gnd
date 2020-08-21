@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head/>
+<h:body>
+    <h1>Suche in Normdaten</h1>
+    <p:panelGrid columns="2">
+        <f:facet name="header">
+            <h:outputText value="Selektierter Pacelli-Datensatz"/>
+        </f:facet>
+
+        <h:outputText value="Name"/>
+        <h:outputText value="#{taskListView.selectedMarcData.name}"/>
+
+        <h:outputText value="Datumsfelder"/>
+        <p:outputPanel>
+            <p:repeat value="#{taskListView.selectedMarcData.dates}"
+                      var="date">
+                <h:outputText value="#{date}"/>
+                <br/>
+            </p:repeat>
+        </p:outputPanel>
+
+        <h:outputText value="Biografie"/>
+        <h:outputText value="#{taskListView.selectedMarcData.bio}"/>
+
+        <h:outputText value="Veröffentlichungen"/>
+        <p:outputPanel>
+            <p:repeat value="#{taskListView.selectedMarcData.titles}"
+                      var="title">
+                <h:outputText value="#{title}"/>
+                <br/>
+            </p:repeat>
+        </p:outputPanel>
+    </p:panelGrid>
+
+    <p:spacer height="20px"
+              width="5px"/>
+
+    <h:form id="contentForm"
+            enctype="multipart/form-data">
+        <h:panelGroup layout="block">
+            <p:dataTable id="authoritiesTable"
+                         var="authority"
+                         value="#{taskListView.lazyAuthorityModel}"
+                         paginator="true"
+                         lazy="true"
+                         paginatorAlwaysVisible="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,25,50,100"
+                         currentPageReportTemplate="{currentPage} von {totalPages}"
+                         rows="25"
+                         emptyMessage="Keine Normdaten gefunden"
+                         selectionMode="single"
+                         selection="#{taskListView.selectedAuthority}"
+                         multiViewState="true">
+                <p:ajax event="rowSelect"
+                        listener="#{taskListView.onAuthorityRowSelect}"
+                        update="@form"/>
+                <p:column headerText="Gnd-Id">
+                    <h:outputText value="#{authority.gndId}"/>
+                </p:column>
+                <p:column headerText="Name">
+                    <h:outputText value="#{authority.name}"/>
+                </p:column>
+                <p:column headerText="Datumsfelder">
+                    <p:repeat value="#{authority.dates}"
+                              var="date">
+                        <h:outputText value="#{date}"/>
+                        <br/>
+                    </p:repeat>
+                </p:column>
+                <p:column headerText="Biografie">
+                    <h:outputText value="#{authority.bio}"/>
+                </p:column>
+                <p:column headerText="Veröffentlichungen">
+                    <p:repeat value="#{authority.titles}"
+                              var="title">
+                        <h:outputText value="#{title}"/>
+                        <br/>
+                    </p:repeat>
+                </p:column>
+
+                <f:facet name="footer">
+                    <h:panelGroup>
+                        <p:commandButton value="Abbruch"
+                                         action="/xhtml/index.xhtml?faces-redirect=true"/>
+                        <p:commandButton value="Ohne Übernahme aus GND weiter"
+                                         action="#{taskListView.create}"/>
+                        <p:spacer width="20px"
+                                  height="10px"/>
+                        <p:inputText value="#{taskListView.directGndId}"/>
+                        <p:commandButton value="Hole Daten"
+                                         action="#{taskListView.searchGndId}"/>
+                    </h:panelGroup>
+                </f:facet>
+            </p:dataTable>
+        </h:panelGroup>
+    </h:form>
+</h:body>
+</html>

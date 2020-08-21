@@ -1,0 +1,189 @@
+quarkus:
+  resteasy:
+    path: /authorities-management-service/api/v1
+  smallrye-openapi:
+    path: /authorities-management-service/openapi
+  swagger-ui:
+    path: /authorities-management-service/swagger-ui
+    always-include: true
+  log:
+    level: INFO
+  container-image:
+    build: true
+    push: false
+    group: wwuulb
+    name: authorities-management
+    registry: ulb.wwu.io
+
+mp:
+  jwt:
+    verify:
+      issuer: https://www.ulb.uni-muenster.de
+      publickey:
+        location: file:/tls/publicKey.pem
+
+http:
+  proxyPort: 3128
+  proxyHost: proxy
+
+"%dev":
+  dnb:
+    gnd:
+      service:
+        update:
+          url: https://devel.dnb.de/sru_ru/
+        search:
+          url: https://services.dnb.de/sru/cbs-appr
+          token: //get from dnb
+      sru:
+        index:
+          geographical: SW
+          event: SW
+          corporatecore: KOR
+          name: SW
+          person: PER
+          keyword: SW
+          work: SW
+          subject: SW
+          identifier: IDN
+        query:
+          geographical:
+          event:
+          corporatecore:
+          name:
+          person:
+          keyword:
+          work:
+          subject:
+          identifier:
+
+"%development":
+  dnb:
+    gnd:
+      service:
+        update:
+          url: https://devel.dnb.de/sru_ru/
+        search:
+          url: https://services.dnb.de/sru/cbs-appr
+          token: //get from dnb
+      sru:
+        index:
+          geographical: SW
+          event: SW
+          corporatecore: KOR
+          name: SW
+          person: PER
+          keyword: SW
+          work: SW
+          subject: SW
+          identifier: IDN
+        query:
+          geographical:
+          event:
+          corporatecore:
+          name:
+          person:
+          keyword:
+          work:
+          subject:
+          identifier:
+
+"%staging":
+  dnb:
+    gnd:
+      service:
+        update:
+          url: https://devel.dnb.de/sru_ru/
+        search:
+          url: https://services.dnb.de/sru/cbs-appr
+          token: //get from dnb
+      sru:
+        index:
+          geographical: SW
+          event: SW
+          corporatecore: KOR
+          name: SW
+          person: PER
+          keyword: SW
+          work: SW
+          subject: SW
+          identifier: IDN
+        query:
+          geographical:
+          event:
+          corporatecore:
+          name:
+          person:
+          keyword:
+          work:
+          subject:
+          identifier:
+
+"%test":
+  dnb:
+    gnd:
+      service:
+        update:
+          url: https://devel.dnb.de/sru_ru/
+        search:
+          url: https://services.dnb.de/sru/cbs-appr
+          token: //get from dnb
+      sru:
+        index:
+          geographical: SW
+          event: SW
+          corporatecore: KOR
+          name: SW
+          person: PER
+          keyword: SW
+          work: SW
+          subject: SW
+          identifier: IDN
+        query:
+          geographical:
+          event:
+          corporatecore:
+          name:
+          person:
+          keyword:
+          work:
+          subject:
+          identifier:
+
+dnb:
+  gnd:
+    service:
+      token:
+        AuthoritiesManagerL1: abc
+        AuthoritiesManagerL2: abc
+        AuthoritiesManagerL3: abc
+        AuthoritiesManagerL4: abc
+        AuthoritiesManagerL5: abc
+        AuthoritiesManagerL6: abc
+        AuthoritiesManagerL7: abc
+      update:
+        url: https://services.dnb.de/sru_ru/
+      search:
+        url: https://services.dnb.de/sru/cbs
+        token: //get from dnb
+    sru:
+      index:
+        geographical: WOE
+        event: WOE
+        corporatecore: WOE
+        name: WOE
+        person: PER
+        keyword: WOE
+        work: WOE
+        subject: WOE
+        identifier: IDN
+      query:
+        geographical: "and BBG=Tg*"
+        event: "and BBG=Tf*"
+        corporatecore: "and BBG=Tb*"
+        name: "and BBG=Tn*"
+        person: "and BBG=Tp*"
+        keyword: "and BBG=Ts*"
+        work: "and BBG=Tu*"
+        subject: "and COD=s"
+        identifier:

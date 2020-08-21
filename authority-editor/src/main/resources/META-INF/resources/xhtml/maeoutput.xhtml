@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head/>
+<h:body>
+    <h:form id="contentForm"
+            enctype="multipart/form-data">
+        <p:spacer height="20"/>
+        <p:panelGrid style="margin-top: 20px">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="2"></p:column>
+                    <p:column>Datensatz</p:column>
+                </p:row>
+            </f:facet>
+
+            <p:row>
+                <p:column colspan="2">Leader</p:column>
+                <p:column>#{taskListView.authorityMarcData.leader}</p:column>
+            </p:row>
+            <p:repeat value="#{taskListView.authorityMarcData.controlFields}"
+                      var="mapEntry">
+                <p:row>
+                    <p:column colspan="2">#{mapEntry.key}</p:column>
+                    <p:column>#{mapEntry.value}</p:column>
+                </p:row>
+            </p:repeat>
+            <p:repeat value="#{taskListView.authorityMarcData.dataFields}"
+                      var="mapEntry"
+                      varStatus="statusSameTag">
+                <p:repeat value="#{mapEntry.value}"
+                          var="datafield"
+                          varStatus="statusDatafield">
+                    <p:repeat value="#{datafield.subFields}"
+                              var="subfieldMapEntry"
+                              varStatus="statusSubfield">
+                        <p:repeat value="#{subfieldMapEntry.value}"
+                                  var="subfield"
+                                  varStatus="statusSubfields">
+                            <p:row>
+                                <p:column rendered="#{statusSubfield.first and statusSubfields.first}"
+                                          rowspan="#{datafield.subFieldsSize}"
+                                          width="120px">
+                                    <h:outputText value="#{mapEntry.key}" />
+                                </p:column>
+                                <p:column>#{subfieldMapEntry.key}</p:column>
+                                <p:column>
+                                    <h:outputText value="#{subfield.value}" />
+                                </p:column>
+                            </p:row>
+                        </p:repeat>
+                    </p:repeat>
+                </p:repeat>
+            </p:repeat>
+        </p:panelGrid>
+        <p:commandButton value="Abbruch"
+                         action="/xhtml/index.xhtml?faces-redirect=true"/>
+    </h:form>
+</h:body>
+</html>
+

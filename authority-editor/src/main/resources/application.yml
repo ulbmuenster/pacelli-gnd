@@ -1,0 +1,62 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: user
+    password: password
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/forschungsdaten
+      min-size: 3
+      max-size: 13
+  container-image:
+    build: true
+    push: false
+    group: wwuulb
+    name: marc-authority-editor
+    registry: ulb.wwu.io
+  http:
+    auth:
+      permission:
+        authenticated:
+          paths: /xhtml/*
+          policy: authenticated
+  oidc:
+    auth-server-url: https://oidc-server
+    client-id: pacelli-gnd-marc-editor
+    application-type: web_app
+    credentials:
+      client-secret:
+        value: diesistgeheim
+        method: basic
+    tls:
+      verification: none
+    authentication:
+      scopes: [email, account, profile]
+      force-redirect-https-scheme: true
+      redirect-path: /xhtml/index.xhtml
+  kubernetes-config:
+    enabled: true
+    fail-on-missing-config: false
+    config-maps: mae-cm
+  log:
+    level: INFO
+
+de:
+  wwu:
+    ulb:
+      mae:
+        client:
+          AuthoritySruSearchClient/mp-rest/url: http://authority-management:8080/authorities-management-service/api/v1/retrieve
+          AuthoritySruUpdateClient/mp-rest/url: http://authority-management:8080/authorities-management-service/api/v1/record
+        tablename: authorities
+        firstnamecolumn: firstname
+        lastnamecolumn: lastname
+        marccolumn: marc21
+        idcolumn: authoritiesid
+        gndidcolumn: gndid
+        gndupdatedcolumn: gndupdated
+        removedgndidcolumn: removedgndid
+        pngndidcolumn: pngndid
+        gndlevelcolumn: gndlevel
+        notescolumn: notes
+      authorities:
+        pk: /tls/privateKey.pem

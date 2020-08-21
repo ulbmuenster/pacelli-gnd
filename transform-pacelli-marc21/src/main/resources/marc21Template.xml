@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record xmlns="http://www.loc.gov/MARC21/slim" type="Authority">
+    <leader>00000nz  a2200000nc 4500</leader>
+    <controlfield tag="008">JJMMTTn||aznnnaabn           | aaa    |c</controlfield>
+    <datafield tag="040" ind1=" " ind2=" ">
+        <subfield code="a">DE-6</subfield>
+        <subfield code="c">DE-6</subfield>
+        <subfield code="9">r:DE-101</subfield>
+        <subfield code="b">ger</subfield>
+        <subfield code="e">rda</subfield>
+    </datafield>
+    <datafield tag="042" ind1=" " ind2=" ">
+        <subfield code="a">gnd3</subfield>
+    </datafield>
+    <datafield tag="043" ind1=" " ind2=" ">
+        <subfield code="c">XA-DE</subfield>
+    </datafield>
+    <datafield tag="075" ind1=" " ind2=" ">
+        <subfield code="b">p</subfield>
+        <subfield code="2">gndgen</subfield>
+    </datafield>
+    <datafield tag="075" ind1=" " ind2=" ">
+        <subfield code="b">piz</subfield>
+        <subfield code="2">gndspec</subfield>
+    </datafield>
+    <datafield tag="079" ind1=" " ind2=" ">
+        <subfield code="a">g</subfield>
+        <subfield code="q">f</subfield>
+        <subfield code="u">v</subfield>
+    </datafield>
+    <datafield tag="667" ind1=" " ind2=" ">
+        <subfield code="a">Pacelli-Edition</subfield>
+    </datafield>
+</record>
