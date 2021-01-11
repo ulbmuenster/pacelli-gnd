@@ -19,6 +19,8 @@ import de.wwu.ulb.mae.client.AuthoritySruUpdateClient;
 import de.wwu.ulb.mae.model.DatabaseEntry;
 import de.wwu.ulb.mae.model.LazyAuthorityModel;
 import de.wwu.ulb.mae.model.LazyDatabaseEntryModel;
+import io.quarkus.oidc.UserInfo;
+import io.quarkus.security.identity.SecurityIdentity;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -105,21 +107,19 @@ public class TaskListView implements Serializable {
 
     private String directGndId;
 
+    @Inject
+    SecurityIdentity securityIdentity;
+
     @PostConstruct
     public void init() {
         lazyModel = new LazyDatabaseEntryModel(database, false);
         lazyEditedModel = new LazyDatabaseEntryModel(database, true);
         jsonb = JsonbBuilder.create();
         builder = new Builder();
-        /*
-        String userInfoUrl = userInfoClient.getUserInfoUrl();
-        LOG.debug(userInfoUrl);
-        userInfo = userInfoClient.getUserInfo(userInfoUrl, accessToken);
-        LOG.info(userInfo.getUserName());
-        */
-        for (String allowedUser : allowedUsers) {
-            LOG.info("Erlaubte Nutzer: " + allowedUser);
-        }
+        UserInfo userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
+        LOG.info(userInfo.getString("sub"));
+        LOG.info(userInfo.getString("email"));
+        LOG.info(userInfo.getString("username"));
     }
 
     public boolean isRenderNotification() {
