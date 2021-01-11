@@ -19,6 +19,8 @@ quarkus:
         authenticated:
           paths: /xhtml/*
           policy: authenticated
+    proxy:
+      proxy-address-forwarding: true
   oidc:
     auth-server-url: https://oidc-server
     client-id: pacelli-gnd-marc-editor
@@ -27,16 +29,38 @@ quarkus:
       client-secret:
         value: diesistgeheim
         method: basic
+    roles:
+      roles:
+        source: userinfo
     tls:
       verification: none
     authentication:
       scopes: [email, account, profile]
       force-redirect-https-scheme: true
       redirect-path: /xhtml/index.xhtml
+      restore-path-after-redirect: false
+      user-info-required: true
+  kubernetes:
+    image-pull-secrets: ulbreg
+    mounts:
+      tls-certs:
+        path: /tls
+        read-only: true
+      postgres-certs:
+        path: /opt/.postgresql
+        read-only: true
+    secret-volumes:
+      tls-certs:
+        secret-name: authority-tls
+      postgres-certs:
+        secret-name: postgres-tls
   kubernetes-config:
     enabled: true
     fail-on-missing-config: false
     config-maps: mae-cm
+    secrets:
+      ~: mae-secret
+      enabled: true
   log:
     level: INFO
 
