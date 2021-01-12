@@ -1,6 +1,6 @@
 /*
  * This file is part of authority-editor.
- * Copyright (C) 2020 Universitäts- und Landesbibliothek Münster.
+ * Copyright (C) 2020, 2021 Universitäts- und Landesbibliothek Münster.
  *
  * authority-editor is free software; you can redistribute it and/or modify it
  * under the terms of the MIT License; see LICENSE file for more details.
@@ -85,27 +85,29 @@ public class TaskListView implements Serializable {
     @Inject
     Database database;
 
-    private Builder builder;
+    Builder builder;
 
-    private Jsonb jsonb;
+    Jsonb jsonb;
 
-    private LazyDataModel<DatabaseEntry> lazyModel;
+    LazyDataModel<DatabaseEntry> lazyModel;
 
-    private LazyDataModel<DatabaseEntry> lazyEditedModel;
+    LazyDataModel<DatabaseEntry> lazyEditedModel;
 
-    private LazyDataModel<MarcData> lazyAuthorityModel;
+    LazyDataModel<MarcData> lazyAuthorityModel;
 
-    private DatabaseEntry selectedDatabaseEntry;
+    DatabaseEntry selectedDatabaseEntry;
 
-    private DatabaseEntry selectedEditedDatabaseEntry;
+    DatabaseEntry selectedEditedDatabaseEntry;
 
-    private MarcData selectedMarcData;
+    MarcData selectedMarcData;
 
-    private MarcData selectedAuthority;
+    MarcData selectedAuthority;
 
-    private MarcData authorityMarcData;
+    MarcData authorityMarcData;
 
-    private String directGndId;
+    String directGndId;
+
+    UserInfo userInfo;
 
     @Inject
     SecurityIdentity securityIdentity;
@@ -148,6 +150,13 @@ public class TaskListView implements Serializable {
 
     public LazyDataModel<MarcData> getLazyAuthorityModel() {
         return lazyAuthorityModel;
+    }
+
+    public boolean isEditor() {
+        if (List.of(allowedUsers).contains(userInfo.getString("username"))) {
+            return true;
+        }
+        return false;
     }
 
     public void onRowSelect(SelectEvent selectEvent) throws IOException {

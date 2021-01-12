@@ -70,8 +70,10 @@
                          action="/xhtml/index.xhtml?faces-redirect=true"/>
         <p:commandButton value="GND-ID entfernen"
                          rendered="#{not empty taskListView.selectedDatabaseEntry.gndId}"
+                         disabled="#{not taskListView.editor}"
                          action="#{taskListView.removeGndId}"/>
         <p:commandButton value="In GND speichern"
+                         disabled="#{not taskListView.editor}"
                          action="#{taskListView.saveInGnd}"/>
     </h:form>
 </h:body>

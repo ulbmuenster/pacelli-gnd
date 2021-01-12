@@ -9,7 +9,7 @@ quarkus:
       max-size: 13
   container-image:
     build: true
-    push: false
+    push: true
     group: wwuulb
     name: marc-authority-editor
     registry: ulb.wwu.io
