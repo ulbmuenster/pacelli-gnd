@@ -10,7 +10,7 @@ quarkus:
     level: INFO
   container-image:
     build: true
-    push: false
+    push: true
     group: wwuulb
     name: authorities-management
     registry: ulb.wwu.io

@@ -9,7 +9,7 @@ quarkus:
       max-size: 13
   container-image:
     build: true
-    push: false
+    push: true
     group: wwuulb
     name: marc-authority-editor
     registry: ulb.wwu.io
@@ -78,11 +78,11 @@ de:
         client:
           AuthoritySruSearchClient/mp-rest/url: http://authority-management:8080/authorities-management-service/api/v1/retrieve
           AuthoritySruUpdateClient/mp-rest/url: http://authority-management:8080/authorities-management-service/api/v1/record
-        tablename: authorities
+        tablename: pacelli
         firstnamecolumn: firstname
         lastnamecolumn: lastname
         marccolumn: marc21
-        idcolumn: authoritiesid
+        idcolumn: pacelliid
         gndidcolumn: gndid
         gndupdatedcolumn: gndupdated
         removedgndidcolumn: removedgndid
