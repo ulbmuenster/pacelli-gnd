@@ -9,7 +9,7 @@ quarkus:
       max-size: 13
   container-image:
     build: true
-    push: true
+    push: false
     group: wwuulb
     name: marc-authority-editor
     registry: ulb.wwu.io
@@ -54,6 +54,13 @@ quarkus:
         secret-name: authority-tls
       postgres-certs:
         secret-name: postgres-tls
+    resources:
+      limits:
+        cpu: 2
+        memory: 2Gi
+      requests:
+        cpu: 2
+        memory: 2Gi
   kubernetes-config:
     enabled: true
     fail-on-missing-config: false

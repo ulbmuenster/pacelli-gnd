@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.wwu.ulb</groupId>
     <artifactId>pacelli-gnd</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -109,8 +109,8 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>prepare</goal>
-                            <goal>prepare-tests</goal>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
                             <goal>build</goal>
                         </goals>
                     </execution>

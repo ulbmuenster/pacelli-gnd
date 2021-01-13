@@ -14,6 +14,28 @@ quarkus:
     group: wwuulb
     name: authorities-management
     registry: ulb.wwu.io
+  kubernetes:
+    image-pull-secrets: ulbreg
+    mounts:
+      tls-certs:
+        path: /tls
+        read-only: true
+    secret-volumes:
+      tls-certs:
+        secret-name: authority-tls
+    resources:
+      limits:
+        cpu: 2
+        memory: 2Gi
+      requests:
+        cpu: 2
+        memory: 2Gi
+  kubernetes-config:
+    enabled: true
+    fail-on-missing-config: false
+    secrets:
+      ~: ams-secret
+      enabled: true
 
 mp:
   jwt:
