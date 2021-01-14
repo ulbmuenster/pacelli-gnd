@@ -30,12 +30,11 @@ quarkus:
         value: diesistgeheim
         method: basic
     roles:
-      roles:
-        source: userinfo
+      source: userinfo
     tls:
       verification: none
     authentication:
-      scopes: [email, account, profile]
+      scopes: [email, openid, profile]
       force-redirect-https-scheme: true
       redirect-path: /xhtml/index.xhtml
       restore-path-after-redirect: false
