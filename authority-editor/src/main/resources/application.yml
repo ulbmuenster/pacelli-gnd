@@ -76,8 +76,8 @@ de:
     ulb:
       mae:
         client:
-          AuthoritySruSearchClient/mp-rest/url: http://authority-management:8080/authorities-management-service/api/v1/retrieve
-          AuthoritySruUpdateClient/mp-rest/url: http://authority-management:8080/authorities-management-service/api/v1/record
+          AuthoritySruSearchClient/mp-rest/url: http://authorities-management:8080/authorities-management-service/api/v1/retrieve
+          AuthoritySruUpdateClient/mp-rest/url: http://authorities-management:8080/authorities-management-service/api/v1/record
         tablename: pacelli
         firstnamecolumn: firstname
         lastnamecolumn: lastname
