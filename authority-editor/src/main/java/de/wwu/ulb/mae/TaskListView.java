@@ -118,7 +118,7 @@ public class TaskListView implements Serializable {
         lazyEditedModel = new LazyDatabaseEntryModel(database, true);
         jsonb = JsonbBuilder.create();
         builder = new Builder();
-        UserInfo userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
+        userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
         LOG.info(userInfo.getString("sub"));
         LOG.info(userInfo.getString("email"));
         LOG.info(userInfo.getString("username"));
