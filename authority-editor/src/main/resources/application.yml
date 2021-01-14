@@ -34,7 +34,7 @@ quarkus:
     tls:
       verification: none
     authentication:
-      scopes: [email, openid, profile]
+      scopes: [email, account, profile]
       force-redirect-https-scheme: true
       redirect-path: /xhtml/index.xhtml
       restore-path-after-redirect: false
@@ -74,6 +74,7 @@ de:
   wwu:
     ulb:
       mae:
+        oidc: satosa
         client:
           AuthoritySruSearchClient/mp-rest/url: http://authorities-management:8080/authorities-management-service/api/v1/retrieve
           AuthoritySruUpdateClient/mp-rest/url: http://authorities-management:8080/authorities-management-service/api/v1/record
