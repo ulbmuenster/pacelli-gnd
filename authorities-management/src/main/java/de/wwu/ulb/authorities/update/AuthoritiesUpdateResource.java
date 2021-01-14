@@ -190,8 +190,8 @@ public class AuthoritiesUpdateResource {
             URL serviceUrl = new URL(gndServiceUrl);
             Proxy proxy;
             try {
-                Optional<String> proxyPort = config.getOptionalValue("http.proxyPort", String.class);
-                Optional<String> proxyHost = config.getOptionalValue("http.proxyHost", String.class);
+                Optional<String> proxyPort = config.getOptionalValue("https.proxyPort", String.class);
+                Optional<String> proxyHost = config.getOptionalValue("https.proxyHost", String.class);
                 int port = Integer.parseInt(proxyPort.orElse("80"));
                 proxy = proxyHost.isPresent()
                         ? new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost.get(), port))

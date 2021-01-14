@@ -44,9 +44,9 @@ mp:
       publickey:
         location: file:/tls/publicKey.pem
 
-http:
+https:
   proxyPort: 3128
-  proxyHost: proxy
+  proxyHost: wwwproxy.uni-muenster.de
 
 "%dev":
   dnb:
