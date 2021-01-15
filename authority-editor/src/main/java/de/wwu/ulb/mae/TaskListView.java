@@ -75,6 +75,10 @@ public class TaskListView implements Serializable {
     String[] allowedUsers;
 
     @Inject
+    @ConfigProperty(name = "de.wwu.ulb.mae.oidc")
+    String serverType;
+
+    @Inject
     @RestClient
     AuthoritySruSearchClient authoritySruSearchClient;
 
@@ -119,9 +123,11 @@ public class TaskListView implements Serializable {
         jsonb = JsonbBuilder.create();
         builder = new Builder();
         userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
-        LOG.info(userInfo.getString("sub"));
-        LOG.info(userInfo.getString("email"));
-        LOG.info(userInfo.getString("username"));
+        if (serverType.equals("dex")) {
+            LOG.info(userInfo.getString("federated_claims.user_id"));
+        } else {
+            LOG.info(userInfo.getString("username"));
+        }
     }
 
     public boolean isRenderNotification() {
