@@ -114,6 +114,8 @@ public class TaskListView implements Serializable {
 
     UserInfo userInfo;
 
+    String userName;
+
     @Inject
     SecurityIdentity securityIdentity;
 
@@ -124,21 +126,12 @@ public class TaskListView implements Serializable {
         jsonb = JsonbBuilder.create();
         builder = new Builder();
         userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
-        userInfo.getPropertyNames()
-                .forEach(key -> LOG.info(key));
         if (serverType.equals("dex")) {
             JsonObject federatedClaims = userInfo.getObject("federated_claims");
-            federatedClaims.keySet()
-                    .forEach(key -> LOG.info("federated_claims:" + key));
-            LOG.info(userInfo.getString("iss"));
-            LOG.info(userInfo.getString("sub"));
-            LOG.info(userInfo.getString("aud"));
-            LOG.info(userInfo.getString("exp"));
-            LOG.info(userInfo.getString("iat"));
-            LOG.info(userInfo.getString("at_hash"));
-            LOG.info(federatedClaims.getString("connector_id"));
             LOG.info(federatedClaims.getString("user_id"));
+            userName = federatedClaims.getString("user_id");
         } else {
+            userName = userInfo.getString("username");
             LOG.info(userInfo.getString("username"));
         }
     }
@@ -172,7 +165,7 @@ public class TaskListView implements Serializable {
     }
 
     public boolean isEditor() {
-        if (List.of(allowedUsers).contains(userInfo.getString("username"))) {
+        if (List.of(allowedUsers).contains(userName)) {
             return true;
         }
         return false;
