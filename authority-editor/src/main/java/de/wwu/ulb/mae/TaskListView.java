@@ -39,6 +39,7 @@ import javax.faces.push.Push;
 import javax.faces.push.PushContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.json.JsonObject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.core.EntityTag;
@@ -123,8 +124,20 @@ public class TaskListView implements Serializable {
         jsonb = JsonbBuilder.create();
         builder = new Builder();
         userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
+        userInfo.getPropertyNames()
+                .forEach(key -> LOG.info(key));
         if (serverType.equals("dex")) {
-            LOG.info(userInfo.getString("federated_claims.user_id"));
+            JsonObject federatedClaims = userInfo.getObject("federated_claims");
+            federatedClaims.keySet()
+                    .forEach(key -> LOG.info("federated_claims:" + key));
+            LOG.info(userInfo.getString("iss"));
+            LOG.info(userInfo.getString("sub"));
+            LOG.info(userInfo.getString("aud"));
+            LOG.info(userInfo.getString("exp"));
+            LOG.info(userInfo.getString("iat"));
+            LOG.info(userInfo.getString("at_hash"));
+            LOG.info(federatedClaims.getString("connector_id"));
+            LOG.info(federatedClaims.getString("user_id"));
         } else {
             LOG.info(userInfo.getString("username"));
         }
