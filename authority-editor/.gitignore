@@ -36,5 +36,5 @@ pom.xml.versionsBackup
 release.properties
 
 # WWU
-src/main/resources/mae-cm.yml
-src/main/resources/application-prod.yml
+src/main/resources/kubernetes/mae-cm.yml
+src/main/resources/kubernetes/application-prod.yml

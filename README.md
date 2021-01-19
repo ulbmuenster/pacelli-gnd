@@ -50,5 +50,10 @@ vorliegenden Daten zur Erzeugung eines individualisierten Personennormdatensatze
 
 ## Erzeugen der Anwendungen
 
-Die Anwendungen werden mit dem Kommando `mvn package` erzeugt. Dies erzeugt sämtliche Module auf einmal.
-Alternativ kann auch jedes Modul einzeln erzeugt werden. Vgl. die entsprechenden `README.md`-Dateien in den Unterverzeichnissen. 
+Alle Anwendungen werden mit dem Kommando 
+```shell script
+mvn clean package
+``` 
+erzeugt. Dies erzeugt sämtliche Module auf einmal.
+Alternativ kann auch jedes Modul einzeln erzeugt werden. Vgl. die entsprechenden `README.md`-Dateien in den 
+Unterverzeichnissen. 
