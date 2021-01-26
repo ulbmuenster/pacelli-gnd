@@ -31,7 +31,8 @@
                              editable="true"
                              editMode="cell"
                              rowKey="#{task.id}"
-                             multiViewState="true">
+                             multiViewState="true"
+                             widgetVar="tasksTable">
                     <p:ajax event="cellEdit"
                             listener="#{taskListView.onNotesEdited}" />
                     <p:column headerText="Pacelli-ID"
@@ -49,11 +50,13 @@
                         </h:panelGroup>
                     </p:column>
                     <p:column headerText="Nachname"
+                              id="lastName"
                               sortBy="#{task.lastName}"
                               filterBy="#{task.lastName}">
                         <h:outputText value="#{task.lastName}"/>
                     </p:column>
                     <p:column headerText="Vorname"
+                              id="firstName"
                               filterBy="#{task.firstName}">
                         <h:outputText value="#{task.firstName}"/>
                     </p:column>
@@ -62,6 +65,7 @@
                         <h:outputText value="#{task.gndLevel}"/>
                     </p:column>
                     <p:column headerText="Anmerkung"
+                              id="notes"
                               filterBy="#{task.notes}">
                         <p:cellEditor>
                             <f:facet name="output">

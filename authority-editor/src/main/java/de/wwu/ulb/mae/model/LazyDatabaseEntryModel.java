@@ -8,6 +8,7 @@
 package de.wwu.ulb.mae.model;
 
 import de.wwu.ulb.mae.Database;
+import org.jboss.logging.Logger;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
+
+    private static final Logger LOG = Logger.getLogger(LazyDatabaseEntryModel.class.getName());
 
     private Database database;
 
@@ -49,6 +52,7 @@ public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
     @Override
     public List<DatabaseEntry> load(int first, int pageSize, Map<String, SortMeta> sortBy,
                                     Map<String, FilterMeta> filters) {
+        LOG.info("Entered first load implementation");
         Map<String, String> filterMap = createFilterMap(filters);
         String sortField = null;
         String sortOrder = null;
@@ -66,10 +70,32 @@ public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
         return databaseEntries;
     }
 
+    @Override
+    public List<DatabaseEntry> load(int first, int pageSize, String sortField, SortOrder sortOrder,
+                                    Map<String,FilterMeta> filters) {
+        LOG.info("Entered alternative load implementation");
+        Map<String, String> filterMap = createFilterMap(filters);
+        String sortOrderString = null;
+        if (sortOrder != null) {
+            sortOrderString = sortOrder.equals(SortOrder.ASCENDING) ? "ASC" : "DESC";
+        }
+        LOG.info("start searching...");
+        databaseEntries = database.findDatabaseEntries(pageSize, first,
+                sortField, sortOrderString, edited, filterMap);
+        setRowCount(database.findDatabaseSize(edited));
+        return databaseEntries;
+    }
+
     public Map<String, String> createFilterMap(Map<String, FilterMeta> filters) {
+        LOG.info("Entered createFilterMap");
         Map<String, String> filterMap = new HashMap<>();
-        for (String key : filters.keySet()) {
-            filterMap.put(filters.get(key).getColumnKey(), (String) filters.get(key).getFilterValue());
+        if (filters != null && filters.keySet() != null) {
+            for (String key : filters.keySet()) {
+                LOG.info("Key: " + key + ", Field: " + filters.get(key).getFilterField() + ", CKey: " + filters.get(key).getColumnKey());
+                if (filters.get(key).getFilterValue() != null) {
+                    filterMap.put(filters.get(key).getFilterField(), (String) filters.get(key).getFilterValue());
+                }
+            }
         }
         return filterMap;
     }

@@ -112,6 +112,12 @@ public class Database {
                                                String sortField, String sortOrder,
                                                String select,
                                                Map<String, String> filter) {
+        LOG.info("Parameters: Limit=" + limit + ", Offset=" + offset + ", SortField=" + sortField +
+                ", SortOrder=" + sortOrder + ", Select=" + select);
+        if (filter != null) {
+            filter.keySet()
+                    .forEach(key -> LOG.info("Key=" + key + ", Value=" + filter.get(key)));
+        }
         if (sortField == null) {
             sortField = "id";
         }
@@ -153,7 +159,7 @@ public class Database {
                 pnGndIdColumnName.get(), gndLevelColumnName.get(), notesColumnName.get(),
                 tableName.get(), marcColumnName.get(), gndUpdatedColumnName.get(),
                 filterValue.toString(), order, sortOrder != null ? sortOrder : "");
-        LOG.debug(selectStatement);
+        LOG.info(selectStatement);
         Connection connection = null;
         PreparedStatement statement = null;
         try {
