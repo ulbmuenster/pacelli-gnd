@@ -76,7 +76,7 @@ public class TaskListView implements Serializable {
     String[] allowedUsers;
 
     @Inject
-    @ConfigProperty(name = "de.wwu.ulb.mae.oidc")
+    @ConfigProperty(name = "de.wwu.ulb.mae.oidc", defaultValue = "SATOSA")
     String serverType;
 
     @Inject
