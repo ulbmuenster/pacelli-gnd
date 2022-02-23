@@ -151,9 +151,13 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
                 .replaceFirst("CM", "");
         String alternativeFirstName = "";
         if (firstName.contains(" (Taufname: ")) {
+            int index = firstName.indexOf(")", firstName.indexOf(" (Taufname: ") + " (Taufname: ".length());
+            if (index == -1) {
+                index = firstName.indexOf("]", firstName.indexOf(" (Taufname: ") + " (Taufname: ".length());
+            }
             alternativeFirstName = firstName.substring(
                     firstName.indexOf(" (Taufname: ") + " (Taufname: ".length(),
-                    firstName.indexOf(")"));
+                    index);
         }
         lastName = removeBrackets(lastName);
         if (lastName.contains(",")) {
