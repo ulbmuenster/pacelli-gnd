@@ -48,7 +48,7 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
     }
 
     @Override
-    public Object getRowKey(MarcData marcData) {
+    public String getRowKey(MarcData marcData) {
         return marcData.getControlFields()
                 .get("001");
     }
@@ -68,6 +68,10 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
         setRowCount(marcMap.size());
         authorityEntries = new ArrayList<>(marcMap.values());
         return authorityEntries;
+    }
+
+    public int count(Map<String, FilterMeta> filterBy) {
+        return 0;
     }
 
     private List<String> buildQuery(String firstName, String lastName) {

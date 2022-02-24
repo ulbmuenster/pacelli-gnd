@@ -45,8 +45,8 @@ public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
     }
 
     @Override
-    public Object getRowKey(DatabaseEntry databaseEntry) {
-        return databaseEntry.getId();
+    public String getRowKey(DatabaseEntry databaseEntry) {
+        return databaseEntry.getId().toString();
     }
 
     @Override
@@ -60,8 +60,8 @@ public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
             SortMeta sortMeta = sortBy.values()
                     .iterator()
                     .next();
-            sortField = sortMeta.getSortField();
-            sortOrder = sortMeta.getSortOrder()
+            sortField = sortMeta.getField();
+            sortOrder = sortMeta.getOrder()
                     .equals(SortOrder.ASCENDING) ? "ASC" : "DESC";
         }
         databaseEntries = database.findDatabaseEntries(pageSize, first,
@@ -70,7 +70,10 @@ public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
         return databaseEntries;
     }
 
-    @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        return 0;
+    }
+
     public List<DatabaseEntry> load(int first, int pageSize, String sortField, SortOrder sortOrder,
                                     Map<String,FilterMeta> filters) {
         LOG.info("Entered alternative load implementation");
@@ -89,11 +92,10 @@ public class LazyDatabaseEntryModel extends LazyDataModel<DatabaseEntry> {
     public Map<String, String> createFilterMap(Map<String, FilterMeta> filters) {
         LOG.info("Entered createFilterMap");
         Map<String, String> filterMap = new HashMap<>();
-        if (filters != null && filters.keySet() != null) {
+        if (filters != null) {
             for (String key : filters.keySet()) {
-                LOG.info("Key: " + key + ", Field: " + filters.get(key).getFilterField() + ", CKey: " + filters.get(key).getColumnKey());
                 if (filters.get(key).getFilterValue() != null) {
-                    filterMap.put(filters.get(key).getFilterField(), (String) filters.get(key).getFilterValue());
+                    filterMap.put(filters.get(key).getField(), (String) filters.get(key).getFilterValue());
                 }
             }
         }
