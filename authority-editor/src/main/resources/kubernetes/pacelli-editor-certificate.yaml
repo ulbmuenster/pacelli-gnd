@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: workshop
+  name: pacelli-editor
   annotations:
     cert-manager.io/issue-temporary-certificate: "true"
     argocd.argoproj.io/sync-options: Prune=false
@@ -9,10 +9,10 @@ metadata:
 spec:
   # commonName and dnsNames are restricted and need to be apply for in the
   # project application, if the wwuit-acme cluster issuer is used.
-  commonName: "kubernetes-workshop.uni-muenster.de"
+  commonName: "pacelli-editor.uni-muenster.de"
   dnsNames:
-    - "kubernetes-workshop.uni-muenster.de"
-    - "kubernetes-workshop.wwu.de"
+    - "pacelli-editor.uni-muenster.de"
+    - "pacelli-editor.wwu.de"
   # Cluster Issuer with which certificates from the DFN can be requested.
   issuerRef:
     group: cert-manager.io
@@ -22,7 +22,7 @@ spec:
     rotationPolicy: Always
     algorithm: ECDSA
     size: 256
-  secretName: workshop-certificate
+  secretName: pe-certificate
   subject:
     countries:
       - DE
