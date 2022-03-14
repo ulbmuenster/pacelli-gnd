@@ -14,6 +14,8 @@ quarkus:
     name: marc-authority-editor
     registry: ulb.wwu.io
   http:
+    non-application-root-path: /authority-editor/q
+    port: 8080
     auth:
       permission:
         authenticated:
@@ -21,6 +23,10 @@ quarkus:
           policy: authenticated
     proxy:
       proxy-address-forwarding: true
+  smallrye-health:
+    root-path: health
+    ui:
+      always-include: true
   oidc:
     auth-server-url: https://oidc-server
     client-id: pacelli-gnd-marc-editor

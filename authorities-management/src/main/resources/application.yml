@@ -1,11 +1,18 @@
 quarkus:
+  http:
+    non-application-root-path: /authorities-management-service/q
+    port: 8080
   resteasy:
     path: /authorities-management-service/api/v1
   smallrye-openapi:
-    path: /authorities-management-service/openapi
+    path: openapi
   swagger-ui:
-    path: /authorities-management-service/swagger-ui
+    path: swagger-ui
     always-include: true
+  smallrye-health:
+    root-path: health
+    ui:
+      always-include: true
   log:
     level: INFO
   container-image:
