@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: marc-authority-editor
+  name: marc-authority-editor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: marc-authority-editor
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: marc-authority-editor
+    spec:
+      containers:
+        - name: marc-authority-editor
+          resources:
+            requests:
+              ephemeral-storage: 1Gi
+            limits:
+              ephemeral-storage: 1Gi
