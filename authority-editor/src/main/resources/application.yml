@@ -50,15 +50,17 @@ quarkus:
     mounts:
       tls-certs:
         path: /tls
-        read-only: true
+        read-only: false
       postgres-certs:
         path: /opt/.postgresql
-        read-only: true
+        read-only: false
     secret-volumes:
       tls-certs:
         secret-name: authority-tls
+        default-mode: 0666
       postgres-certs:
         secret-name: postgres-tls
+        default-mode: 0666
     resources:
       limits:
         cpu: 0.5

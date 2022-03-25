@@ -30,6 +30,7 @@ quarkus:
     secret-volumes:
       tls-certs:
         secret-name: authority-tls
+        default-mode: 0666
     resources:
       limits:
         cpu: 0.5
