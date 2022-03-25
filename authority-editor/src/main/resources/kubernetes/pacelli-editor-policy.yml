@@ -28,7 +28,11 @@ spec:
             dns:
               - matchPattern: "*"
     - toEndpoints:
-        - {}
+        - matchLabels:
+            app.kubernetes.io/name: authorities-management
+      toPorts:
+        - ports:
+            - port: "8080"
     - toFQDNs:
         - matchPattern: "*.uni-muenster.de"
       toPorts:
