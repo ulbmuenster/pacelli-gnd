@@ -38,3 +38,8 @@ spec:
       toPorts:
         - ports:
             - port: "54331"
+    - toFQDNs:
+        - matchPattern: "*.wwu.de"
+      toPorts:
+        - ports:
+            - port: "443"
