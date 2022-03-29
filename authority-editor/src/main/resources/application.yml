@@ -6,7 +6,8 @@ quarkus:
     jdbc:
       url: jdbc:postgresql://localhost:5432/forschungsdaten
       min-size: 3
-      max-size: 13
+      max-size: 5
+      initial-size: 3
   container-image:
     build: true
     push: true
@@ -31,6 +32,7 @@ quarkus:
     auth-server-url: https://oidc-server
     client-id: pacelli-gnd-marc-editor
     application-type: web_app
+    tenant-enabled: false
     credentials:
       client-secret:
         value: diesistgeheim
