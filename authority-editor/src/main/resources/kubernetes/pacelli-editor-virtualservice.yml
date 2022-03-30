@@ -14,20 +14,10 @@ spec:
   gateways:
     - pacelli-editor
   http:
-    - match:
-        - uri:
-            prefix: /authorities-management-service/
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: authority-management
-            port:
-              number: 8080
     - route:
         - destination:
             host: marc-authority-editor
             port:
-              number: 8080
+              number: 80
 
 

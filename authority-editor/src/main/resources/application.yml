@@ -29,10 +29,11 @@ quarkus:
     ui:
       always-include: true
   oidc:
+    enabled: true
     auth-server-url: https://oidc-server
     client-id: pacelli-gnd-marc-editor
-    application-type: web_app
-    tenant-enabled: false
+    application-type: web-app
+    tenant-enabled: true
     credentials:
       client-secret:
         value: diesistgeheim
@@ -42,7 +43,7 @@ quarkus:
     tls:
       verification: none
     authentication:
-      scopes: [email, account, profile]
+      scopes: email, account
       force-redirect-https-scheme: true
       redirect-path: /xhtml/index.xhtml
       restore-path-after-redirect: false

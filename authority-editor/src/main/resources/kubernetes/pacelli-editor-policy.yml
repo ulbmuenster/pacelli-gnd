@@ -15,6 +15,17 @@ spec:
       toPorts:
         - ports:
             - port: "443"
+    - fromEndpoints:
+        - matchLabels:
+            io.cilium.k8s.policy.cluster: ms1
+            k8s:app: istio-ingressgateway
+            k8s:io.kubernetes.pod.namespace: istio-ingressgateway
+            k8s:istio: ingressgateway
+            k8s:name: istio-ingressgateway
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -39,7 +50,7 @@ spec:
         - ports:
             - port: "54331"
     - toFQDNs:
-        - matchPattern: "*.wwu.de"
+        - matchPattern: "*.k8s.wwu.de"
       toPorts:
         - ports:
             - port: "443"
