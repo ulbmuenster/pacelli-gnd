@@ -50,7 +50,12 @@ spec:
         - ports:
             - port: "54331"
     - toFQDNs:
-        - matchPattern: "*.k8s.wwu.de"
+        - matchName: auth.k8s.wwu.de
       toPorts:
         - ports:
             - port: "443"
+    - toFQDNs:
+        - matchName: wwu.de
+      toPorts:
+        - ports:
+            - port: "383"
