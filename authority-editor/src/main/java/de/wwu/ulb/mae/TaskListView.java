@@ -19,7 +19,7 @@ import de.wwu.ulb.mae.client.AuthoritySruUpdateClient;
 import de.wwu.ulb.mae.model.DatabaseEntry;
 import de.wwu.ulb.mae.model.LazyAuthorityModel;
 import de.wwu.ulb.mae.model.LazyDatabaseEntryModel;
-import io.quarkus.oidc.UserInfo;
+//import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -112,7 +112,7 @@ public class TaskListView implements Serializable {
 
     String directGndId;
 
-    UserInfo userInfo;
+//    UserInfo userInfo;
 
     String userName;
 
@@ -125,6 +125,8 @@ public class TaskListView implements Serializable {
         lazyEditedModel = new LazyDatabaseEntryModel(database, true);
         jsonb = JsonbBuilder.create();
         builder = new Builder();
+        userName = securityIdentity.getPrincipal().getName();
+        /*
         userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
         if (serverType.equals("dex")) {
             JsonObject federatedClaims = userInfo.getObject("federated_claims");
@@ -134,6 +136,7 @@ public class TaskListView implements Serializable {
             userName = userInfo.getString("username");
             LOG.info(userInfo.getString("username"));
         }
+         */
     }
 
     public boolean isRenderNotification() {
