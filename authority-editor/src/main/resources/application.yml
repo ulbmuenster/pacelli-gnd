@@ -22,6 +22,7 @@ quarkus:
         authenticated:
           paths: /xhtml/*
           policy: authenticated
+      basic: true
     proxy:
       proxy-address-forwarding: true
   smallrye-health:
@@ -29,7 +30,7 @@ quarkus:
     ui:
       always-include: true
   oidc:
-    enabled: true
+    enabled: false
     auth-server-url: https://oidc-server
     client-id: pacelli-gnd-marc-editor
     application-type: web-app
@@ -38,6 +39,8 @@ quarkus:
       client-secret:
         value: diesistgeheim
         method: basic
+      jwt:
+        token-key-id: pacelli
     roles:
       source: userinfo
     tls:
@@ -48,6 +51,22 @@ quarkus:
       redirect-path: /xhtml/index.xhtml
       restore-path-after-redirect: false
       user-info-required: true
+  security:
+    ldap:
+      enabled: true
+      dir-context:
+        principal: ulbdzal@wwu
+        url: ldap://wwu.de
+        password: xyz
+      identity-mapping:
+        rdn-identifier: cn
+        search-base-dn: ou=Projekt-Benutzer,dc=wwu,dc=de
+        attribute-mappings:
+          "0":
+            from: cn
+            to: groups
+            filter: (member=cn={0})
+            filter-base-dn: ou=Projekt-Gruppen,dc=wwu,dc=de
   kubernetes:
     image-pull-secrets: ulbreg
     mounts:
