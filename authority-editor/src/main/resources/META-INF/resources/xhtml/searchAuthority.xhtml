@@ -8,7 +8,7 @@
       xmlns:p="http://primefaces.org/ui">
 <h:head/>
 <h:body>
-    <h1>Suche in Normdaten</h1>
+    <h1 style="font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;">Suche in Normdaten</h1>
     <p:panelGrid columns="2">
         <f:facet name="header">
             <h:outputText value="Selektierter Pacelli-Datensatz"/>
@@ -90,11 +90,15 @@
                     <h:panelGroup>
                         <p:commandButton value="Abbruch"
                                          action="/xhtml/index.xhtml?faces-redirect=true"/>
+                        <p:spacer width="5px"
+                                  height="10px"/>
                         <p:commandButton value="Ohne Übernahme aus GND weiter"
                                          action="#{taskListView.create}"/>
                         <p:spacer width="20px"
                                   height="10px"/>
                         <p:inputText value="#{taskListView.directGndId}"/>
+                        <p:spacer width="5px"
+                                  height="10px"/>
                         <p:commandButton value="Hole Daten"
                                          action="#{taskListView.searchGndId}"/>
                     </h:panelGroup>
