@@ -14,19 +14,21 @@ import de.wwu.ulb.authorities.marc.SubField;
 import de.wwu.ulb.authorities.search.SearchIndex;
 import de.wwu.ulb.jwt.TokenUtils;
 import de.wwu.ulb.mae.client.AuthoritySearchResponse;
-import de.wwu.ulb.mae.client.AuthoritySruSearchClient;
-import de.wwu.ulb.mae.client.AuthoritySruUpdateClient;
 import de.wwu.ulb.mae.model.DatabaseEntry;
 import de.wwu.ulb.mae.model.LazyAuthorityModel;
 import de.wwu.ulb.mae.model.LazyDatabaseEntryModel;
 //import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.WebClientOptions;
+import io.vertx.mutiny.core.Vertx;
+import io.vertx.mutiny.ext.web.client.WebClient;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ParsingException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
@@ -39,7 +41,6 @@ import javax.faces.push.Push;
 import javax.faces.push.PushContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.json.JsonObject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.core.EntityTag;
@@ -58,6 +59,13 @@ import java.util.Map;
 public class TaskListView implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(TaskListView.class.getName());
+
+    @Inject
+    Vertx vertx;
+
+    WebClient searchClient;
+
+    WebClient updateClient;
 
     boolean renderNotification;
 
@@ -80,12 +88,40 @@ public class TaskListView implements Serializable {
     String serverType;
 
     @Inject
-    @RestClient
-    AuthoritySruSearchClient authoritySruSearchClient;
+    @ConfigProperty(name = "de.wwu.ulb.authorities-search-service.ssl", defaultValue = "true")
+    boolean authoritiesSearchServiceSsl;
 
     @Inject
-    @RestClient
-    AuthoritySruUpdateClient authoritySruUpdateClient;
+    @ConfigProperty(name = "de.wwu.ulb.authorities-search-service.host")
+    String authoritiesSearchServiceHost;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-search-service.port")
+    Integer authoritiesSearchServicePort;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-search-service.query")
+    String authoritiesSearchServiceQuery;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-update-service.ssl", defaultValue = "true")
+    boolean authoritiesUpdateServiceSsl;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-update-service.host")
+    String authoritiesUpdateServiceHost;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-update-service.port")
+    Integer authoritiesUpdateServicePort;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-update-service.create")
+    String authoritiesUpdateServiceCreate;
+
+    @Inject
+    @ConfigProperty(name = "de.wwu.ulb.authorities-update-service.update")
+    String authoritiesUpdateServiceUpdate;
 
     @Inject
     Database database;
@@ -121,11 +157,22 @@ public class TaskListView implements Serializable {
 
     @PostConstruct
     public void init() {
+        this.searchClient = WebClient.create(vertx,
+                new WebClientOptions().setDefaultHost(authoritiesSearchServiceHost)
+                        .setDefaultPort(authoritiesSearchServicePort)
+                        .setSsl(authoritiesSearchServiceSsl)
+                        .setTrustAll(true));
+        this.updateClient = WebClient.create(vertx,
+                new WebClientOptions().setDefaultHost(authoritiesUpdateServiceHost)
+                        .setDefaultPort(authoritiesUpdateServicePort)
+                        .setSsl(authoritiesUpdateServiceSsl)
+                        .setTrustAll(true));
         lazyModel = new LazyDatabaseEntryModel(database, false);
         lazyEditedModel = new LazyDatabaseEntryModel(database, true);
         jsonb = JsonbBuilder.create();
         builder = new Builder();
         userName = securityIdentity.getPrincipal().getName();
+        LOG.debug("Username: " + userName);
         /*
         userInfo = (UserInfo) securityIdentity.getAttribute("userinfo");
         if (serverType.equals("dex")) {
@@ -192,7 +239,7 @@ public class TaskListView implements Serializable {
         } else {
             selectedMarcData = newMarcData;
             lazyAuthorityModel = new LazyAuthorityModel(
-                    authoritySruSearchClient, marcEntry.getFirstName(), marcEntry.getLastName());
+                    searchClient, authoritiesSearchServiceQuery, marcEntry.getFirstName(), marcEntry.getLastName());
             FacesContext.getCurrentInstance()
                     .getExternalContext()
                     .redirect("/xhtml/searchAuthority.xhtml");
@@ -211,7 +258,7 @@ public class TaskListView implements Serializable {
                 newMarcData.addPacelliSource(databaseEntry.getId());
             }
         } catch (ParsingException | IOException e) {
-            LOG.debug("Psrserausnahme!");
+            LOG.debug("Parserausnahme!");
             LOG.error(e.getMessage());
             return;
         }
@@ -224,7 +271,7 @@ public class TaskListView implements Serializable {
             selectedMarcData = newMarcData;
             LOG.debug(selectedMarcData);
             lazyAuthorityModel = new LazyAuthorityModel(
-                    authoritySruSearchClient, marcEntry.getFirstName(), marcEntry.getLastName());
+                    searchClient, authoritiesSearchServiceQuery, marcEntry.getFirstName(), marcEntry.getLastName());
             FacesContext.getCurrentInstance()
                     .getExternalContext()
                     .redirect("/xhtml/searchAuthority.xhtml");
@@ -267,10 +314,23 @@ public class TaskListView implements Serializable {
     private void onRowSelectWithGndId(DatabaseEntry selected, MarcData newMarcData)
             throws IOException {
         authorityMarcData = null;
-        AuthoritySearchResponse authoritySearchResponse = authoritySruSearchClient.searchAuthority(
-                selected.getGndId(), SearchIndex.Identifier, 0, 1);
+        Uni<AuthoritySearchResponse> result = searchClient.get(authoritiesSearchServiceQuery +
+                        "?query=" + selected.getGndId() + "&index=" + SearchIndex.Identifier +
+                        "&startPosition=" + 0 + "&maxResults=" + 1)
+                .send()
+                .onItem()
+                .transform(response -> {
+                    if (response.statusCode() == 200) {
+                        return response.bodyAsJson(AuthoritySearchResponse.class);
+                    } else {
+                        return new AuthoritySearchResponse();
+                    }
+                });
+        AuthoritySearchResponse authoritySearchResponse = result.await()
+                .indefinitely();
         LOG.debug("Suche durchgeführt");
         List<MarcData> marcDatas = authoritySearchResponse.getMarcDatas();
+
         if (marcDatas.size() == 1) {
             LOG.debug("1 Treffer für GND-ID " + selected.getGndId());
             authorityMarcData = marcDatas.get(0);
@@ -290,8 +350,20 @@ public class TaskListView implements Serializable {
 
     public void searchGndId() throws IOException {
         authorityMarcData = null;
-        AuthoritySearchResponse authoritySearchResponse = authoritySruSearchClient.searchAuthority(
-                directGndId, SearchIndex.Identifier, 0, 1);
+        Uni<AuthoritySearchResponse> result = searchClient.get(authoritiesSearchServiceQuery +
+                        "?query=" + directGndId + "&index=" + SearchIndex.Identifier +
+                        "&startPosition=" + 0 + "&maxResults=" + 1)
+                .send()
+                .onItem()
+                .transform(response -> {
+                    if (response.statusCode() == 200) {
+                        return response.bodyAsJson(AuthoritySearchResponse.class);
+                    } else {
+                        return new AuthoritySearchResponse();
+                    }
+                });
+        AuthoritySearchResponse authoritySearchResponse = result.await()
+                .indefinitely();
         List<MarcData> marcDatas = authoritySearchResponse.getMarcDatas();
         if (marcDatas.size() == 1) {
             authorityMarcData = marcDatas.get(0);
@@ -512,41 +584,43 @@ public class TaskListView implements Serializable {
                 !authorityMarcData.getGndId().isEmpty()) {
             action = "update";
         }
-        Response response = null;
         try {
             String token = TokenUtils.generateTokenString(pathToPrivateKey,
                     "gressho",
                     "gressho@uni-muenster.de",
                     "/privateKey.pem");
-            switch (action) {
-                case "update":
-                    response = authoritySruUpdateClient.updateAuthority(
-                            "Bearer " + token,
-                            authorityMarcData);
-                    break;
-                case "create":
-                    System.out.println(jsonb.toJson(authorityMarcData));
-                    response = authoritySruUpdateClient.createAuthority(
-                            "Bearer " + token,
-                            authorityMarcData);
-                    break;
-            }
-
+            String actionUrl = switch (action) {
+                case "update" -> authoritiesUpdateServiceUpdate;
+                case "create" -> authoritiesUpdateServiceCreate;
+                default -> authoritiesUpdateServiceUpdate;
+            };
+            Uni<JsonObject> result = updateClient.post(actionUrl)
+                    .bearerTokenAuthentication(token)
+                    .sendJson(authorityMarcData)
+                    .onItem()
+                    .transform(bufferHttpResponse -> {
+                        if (bufferHttpResponse.statusCode() == 200) {
+                            return bufferHttpResponse.bodyAsJsonObject();
+                        } else {
+                            return new JsonObject()
+                                    .put("code", bufferHttpResponse.statusCode())
+                                    .put("message", bufferHttpResponse.bodyAsString());
+                        }
+                    });
+            JsonObject resultObject = result.await()
+                    .indefinitely();
             //Achtung: Im SRU der DNB ist ein Bug: das geänderte marcxml-Dokument wird komplett
             //ohne Namespace ausgeliefert, so dass das Parsen nicht funktioniert!
 
             Integer id = null;
-            LOG.debug("Responsestatus: " + response.getStatus());
-            if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {
-                EntityTag eTag = response.getEntityTag();
-                String diagnose = eTag.getValue();
+            LOG.debug("Response: " + resultObject.toString());
+            if (resultObject.containsKey("code")) {
                 setRenderNotification(true);
-                setNotification(diagnose);
+                setNotification(resultObject.getString("message"));
                 pushContext.send("updateNotification");
-                LOG.error(diagnose);
-            }
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                MarcData marcData = response.readEntity(MarcData.class);
+                LOG.error(resultObject.getString("message"));
+            } else {
+                MarcData marcData = resultObject.mapTo(MarcData.class);
                 String firstName = null;
                 String lastName = null;
                 if (marcData.getDataFields().containsKey("100") &&

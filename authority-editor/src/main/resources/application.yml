@@ -103,10 +103,22 @@ quarkus:
 de:
   wwu:
     ulb:
+      authorities-search-service:
+        ssl: false
+        host: authorities-management
+        port: 80
+        query: /authorities-management-service/api/v1/retrieve/search
+      authorities-update-service:
+        ssl: false
+        host: authorities-management
+        port: 80
+        create: /authorities-management-service/api/v1/record/create
+        update: /authorities-management-service/api/v1/record/update
       mae:
         oidc: satosa
         client:
           AuthoritySruSearchClient/mp-rest/url: http://authorities-management:8080/authorities-management-service/api/v1/retrieve
+          AuthoritySruSearchClient/mp-rest/scope: javax.inject.Singleton
           AuthoritySruUpdateClient/mp-rest/url: http://authorities-management:8080/authorities-management-service/api/v1/record
         tablename: pacelli
         firstnamecolumn: firstname

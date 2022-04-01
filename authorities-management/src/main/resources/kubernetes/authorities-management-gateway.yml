@@ -1,0 +1,91 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-egressgateway
+spec:
+  selector:
+    istio: egressgateway
+  servers:
+    - port:
+        number: 443
+        name: tls
+        protocol: TLS
+      hosts:
+        - services.dnb.de
+      tls:
+        mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: dnb-se
+spec:
+  exportTo:
+    - .
+    - istio-egressgateway
+  hosts:
+    - services.dnb.de
+  ports:
+    - number: 443
+      name: tls
+      protocol: TLS
+  resolution: DNS
+  location: MESH_EXTERNAL
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: egressgateway-for-dnb
+spec:
+  host: istio-egressgateway.istio-egressgateway.svc.cluster.local
+  # Subnets to keep the traffic in the same cluster
+  subsets:
+    - name: ms1
+      labels:
+        topology.istio.io/cluster: ms1
+    - name: ms2
+      labels:
+        topology.istio.io/cluster: ms2
+---
+# VirtualService to route traffic to the proper egressgateway
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dnb-to-egressgateway
+spec:
+  hosts:
+    - services.dnb.de
+  gateways:
+    - mesh
+  exportTo:
+    - .
+  http:
+    - route:
+        - destination:
+            host: istio-egressgateway.istio-egressgateway.svc.cluster.local
+            # Depends on which cluster the service is installed
+            # Correspond with the subset in the Destination Rule
+            subset: ms1
+            port:
+              number: 443
+          weight: 100
+---
+# VirtualService to route traffic from the the egressgateway to the actual external server
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: egressgateway-to-dnb
+spec:
+  hosts:
+    - services.dnb.de
+  gateways:
+    - istio-egressgateway
+  exportTo:
+    - istio-egressgateway
+  http:
+    - route:
+        - destination:
+            host: services.dnb.de
+            port:
+              number: 443
+          weight: 100

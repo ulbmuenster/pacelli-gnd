@@ -10,7 +10,8 @@ package de.wwu.ulb.mae.model;
 import de.wwu.ulb.authorities.marc.MarcData;
 import de.wwu.ulb.authorities.search.SearchIndex;
 import de.wwu.ulb.mae.client.AuthoritySearchResponse;
-import de.wwu.ulb.mae.client.AuthoritySruSearchClient;
+import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.ext.web.client.WebClient;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
@@ -22,7 +23,9 @@ import java.util.Map;
 
 public class LazyAuthorityModel extends LazyDataModel<MarcData> {
 
-    private AuthoritySruSearchClient authoritySruSearchClient;
+    private WebClient webClient;
+
+    private String authoritiesSearchServiceQuery;
 
     private List<MarcData> authorityEntries;
 
@@ -31,8 +34,9 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
     private String lastName;
 
     public LazyAuthorityModel(
-            AuthoritySruSearchClient authoritySruSearchClient, String firstName, String lastName) {
-        this.authoritySruSearchClient = authoritySruSearchClient;
+            WebClient webClient, String authoritiesSearchServiceQuery, String firstName, String lastName) {
+        this.webClient = webClient;
+        this.authoritiesSearchServiceQuery = authoritiesSearchServiceQuery;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -59,7 +63,7 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
         List<String> queries = buildQuery(firstName, lastName);
         Map<String, MarcData> marcMap = new HashMap<>();
         for (String query : queries) {
-            AuthoritySearchResponse authoritySearchResponse = authoritySruSearchClient.searchAuthority(
+            AuthoritySearchResponse authoritySearchResponse = searchAuthority(
                     query, SearchIndex.Person, first, pageSize);
             for (MarcData marcData : authoritySearchResponse.getMarcDatas()) {
                 marcMap.put(marcData.getControlFields().get("001"), marcData);
@@ -219,4 +223,23 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
         }
         return out.toString();
     }
+
+    private AuthoritySearchResponse searchAuthority(String query, SearchIndex index, int first, int pageSize) {
+        Uni<AuthoritySearchResponse> result = webClient.get(authoritiesSearchServiceQuery +
+                        "?query=" + query + "&index=" + index +
+                        "&startPosition=" + first + "&maxResults=" + pageSize)
+                .send()
+                .onItem()
+                .transform(response -> {
+                    if (response.statusCode() == 200) {
+                        return response.bodyAsJson(AuthoritySearchResponse.class);
+                    } else {
+                        return new AuthoritySearchResponse();
+                    }
+                });
+        AuthoritySearchResponse authoritySearchResponse = result.await()
+                .indefinitely();
+        return authoritySearchResponse;
+    }
+
 }

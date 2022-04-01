@@ -11,7 +11,7 @@
 
     <groupId>de.wwu.ulb</groupId>
     <artifactId>authority-editor</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.13</version>
 
     <dependencies>
         <dependency>
@@ -43,6 +43,14 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jsonp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -104,6 +112,14 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-undertow-websockets</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>smallrye-mutiny-vertx-web-client</artifactId>
+        </dependency>
         <!-- MyFaces -->
         <dependency>
             <groupId>org.apache.myfaces.core.extensions.quarkus</groupId>
@@ -116,11 +132,6 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.primefaces.themes</groupId>
-            <artifactId>all-themes</artifactId>
-            <version>1.0.10</version>
         </dependency>
         <dependency>
             <groupId>xom</groupId>

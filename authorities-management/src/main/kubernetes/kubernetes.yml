@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: authorities-management
+        # Inject an istio sidecar
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: authorities-management

@@ -19,6 +19,7 @@ public class AuthoritySearchResponse {
     private int numberOfResults;
 
     public AuthoritySearchResponse() {
+        numberOfResults = 0;
     }
 
     public AuthoritySearchResponse(List<MarcData> marcDatas, int numberOfResults) {
