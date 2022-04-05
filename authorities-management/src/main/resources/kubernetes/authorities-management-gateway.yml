@@ -59,8 +59,11 @@ spec:
     - mesh
   exportTo:
     - .
-  http:
-    - route:
+  tls:
+    - match:
+        - sniHosts:
+            - services.dnb.de
+      route:
         - destination:
             host: istio-egressgateway.istio-egressgateway.svc.cluster.local
             # Depends on which cluster the service is installed
@@ -82,8 +85,11 @@ spec:
     - istio-egressgateway
   exportTo:
     - istio-egressgateway
-  http:
-    - route:
+  tls:
+    - match:
+        - sniHosts:
+            - services.dnb.de
+      route:
         - destination:
             host: services.dnb.de
             port:

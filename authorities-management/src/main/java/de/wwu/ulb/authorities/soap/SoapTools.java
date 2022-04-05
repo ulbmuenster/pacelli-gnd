@@ -167,12 +167,14 @@ public class SoapTools {
                             .close();
             }
         } catch (IOException | ParsingException e) {
+            LOG.fatal(e.getClass().toString());
             LOG.fatal(e.getMessage());
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
+                    LOG.fatal("Finally closing InputStream lead to problem.");
                     LOG.fatal(e.getMessage());
                 }
             }

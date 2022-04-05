@@ -151,6 +151,7 @@ public class AuthoritiesSearchResource {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", MediaType.APPLICATION_XML);
             LOG.info("connection created");
+            LOG.info("Target-URL: " + connection.getURL().toString());
             return soapTools.buildDocument(connection);
         } catch (IOException e) {
             LOG.fatal(e.getMessage());

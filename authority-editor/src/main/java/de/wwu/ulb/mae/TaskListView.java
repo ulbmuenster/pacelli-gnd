@@ -440,6 +440,7 @@ public class TaskListView implements Serializable {
                                         dataFields.remove(1);
                                     }
                                 } else if (tag.equals("042")) {
+                                    /*
                                     if (dataField.getSubFields().containsKey("a")) {
                                         String gndLevel = dataField.getSubFields()
                                                 .get("a")
@@ -448,25 +449,27 @@ public class TaskListView implements Serializable {
                                         int level = Integer.parseInt(gndLevel.substring(3));
                                         authorityMarcData.getDataFields()
                                                 .get("042")
+                                                .stream()
+                                                .filter(authority -> authority.getSubFields().containsKey("a"))
                                                 .forEach(authority -> {
-                                                    if (authority.getSubFields().containsKey("a")) {
-                                                        String authorityGndLevel = authority.getSubFields()
+                                                    String authorityGndLevel = authority.getSubFields()
+                                                            .get("a")
+                                                            .get(0)
+                                                            .getValue();
+                                                    LOG.debug("$a: " + authorityGndLevel);
+                                                    int authorityLevel = Integer.parseInt(
+                                                            authorityGndLevel.substring(3));
+                                                    if (level < authorityLevel) {
+                                                        authority.getSubFields()
                                                                 .get("a")
-                                                                .get(0)
-                                                                .getValue();
-                                                        int authorityLevel = Integer.parseInt(
-                                                                authorityGndLevel.substring(3));
-                                                        if (level < authorityLevel) {
-                                                            authority.getSubFields()
-                                                                    .get("a")
-                                                                    .remove(0);
-                                                            authority.getSubFields()
-                                                                    .get("a")
-                                                                    .add(0, new SubField(gndLevel, true));
-                                                        }
+                                                                .remove(0);
+                                                        authority.getSubFields()
+                                                                .get("a")
+                                                                .add(0, new SubField(gndLevel, true));
                                                     }
                                                 });
                                     }
+                                     */
                                 } else if (tag.equals("075")) {
                                     int index = authorityMarcData.getDataFields()
                                             .get(tag)

@@ -39,4 +39,4 @@ spec:
             io.kubernetes.pod.namespace: istio-egressgateway
       toPorts:
         - ports:
-            - port: "8080"
+            - port: "8443"

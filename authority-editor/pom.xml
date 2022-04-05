@@ -11,7 +11,7 @@
 
     <groupId>de.wwu.ulb</groupId>
     <artifactId>authority-editor</artifactId>
-    <version>3.0.14</version>
+    <version>3.0.15</version>
 
     <dependencies>
         <dependency>
