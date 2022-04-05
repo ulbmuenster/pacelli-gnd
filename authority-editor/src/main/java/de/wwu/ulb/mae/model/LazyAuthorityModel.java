@@ -9,9 +9,11 @@ package de.wwu.ulb.mae.model;
 
 import de.wwu.ulb.authorities.marc.MarcData;
 import de.wwu.ulb.authorities.search.SearchIndex;
+import de.wwu.ulb.mae.TaskListView;
 import de.wwu.ulb.mae.client.AuthoritySearchResponse;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.ext.web.client.WebClient;
+import org.jboss.logging.Logger;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class LazyAuthorityModel extends LazyDataModel<MarcData> {
+
+    private static final Logger LOG = Logger.getLogger(LazyAuthorityModel.class.getName());
 
     private WebClient webClient;
 
@@ -39,6 +43,8 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
         this.authoritiesSearchServiceQuery = authoritiesSearchServiceQuery;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.authorityEntries = new ArrayList<>();
+        LOG.debug("LazyAuthorityModel initialized");
     }
 
     @Override
@@ -60,7 +66,9 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
     @Override
     public List<MarcData> load(int first, int pageSize, Map<String, SortMeta> sortBy,
                                Map<String, FilterMeta> filters) {
+        LOG.debug("Baue Query: " + lastName + ", " + firstName);
         List<String> queries = buildQuery(firstName, lastName);
+        LOG.debug("#Queries: " + queries.size());
         Map<String, MarcData> marcMap = new HashMap<>();
         for (String query : queries) {
             AuthoritySearchResponse authoritySearchResponse = searchAuthority(
@@ -183,15 +191,17 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
         for (String lastNameSplitted : lastNames) {
             for (String firstnameSplitted : firstNames) {
                 if (lastNameSplitted.isEmpty()) {
-                    queries.add(firstnameSplitted);
+                    queries.add(firstnameSplitted.replaceAll(" ", "%20"));
                 } else if (firstnameSplitted.isEmpty()) {
-                    queries.add(lastNameSplitted);
+                    queries.add(lastNameSplitted.replaceAll(" ", "%20"));
                 } else {
-                    queries.add(lastNameSplitted + ", " + firstnameSplitted + prefix);
+                    String query = lastNameSplitted + ", " + firstnameSplitted + prefix;
+                    queries.add(query.replaceAll(" ", "%20"));
                 }
             }
             if (!alternativeFirstName.isEmpty()) {
-                queries.add(lastNameSplitted + ", " + alternativeFirstName);
+                String query = lastNameSplitted + ", " + alternativeFirstName;
+                queries.add(query.replaceAll(" ", "%20"));
             }
         }
         return queries;
@@ -225,12 +235,16 @@ public class LazyAuthorityModel extends LazyDataModel<MarcData> {
     }
 
     private AuthoritySearchResponse searchAuthority(String query, SearchIndex index, int first, int pageSize) {
+        LOG.debug("Query: " + authoritiesSearchServiceQuery +
+                "?query=" + query + "&index=" + index +
+                "&startPosition=" + first + "&maxResults=" + pageSize);
         Uni<AuthoritySearchResponse> result = webClient.get(authoritiesSearchServiceQuery +
                         "?query=" + query + "&index=" + index +
                         "&startPosition=" + first + "&maxResults=" + pageSize)
                 .send()
                 .onItem()
                 .transform(response -> {
+                    LOG.debug("Status: " + response.statusCode());
                     if (response.statusCode() == 200) {
                         return response.bodyAsJson(AuthoritySearchResponse.class);
                     } else {
