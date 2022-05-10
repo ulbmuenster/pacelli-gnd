@@ -90,6 +90,7 @@ quarkus:
       requests:
         cpu: 0.5
         memory: 2Gi
+    add-version-to-label-selectors: false
   kubernetes-config:
     enabled: true
     fail-on-missing-config: false

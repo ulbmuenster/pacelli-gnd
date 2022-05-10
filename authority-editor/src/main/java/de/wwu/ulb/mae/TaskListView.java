@@ -22,6 +22,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
+import io.vertx.mutiny.core.MultiMap;
 import io.vertx.mutiny.core.Vertx;
 import io.vertx.mutiny.ext.web.client.WebClient;
 import nu.xom.Builder;
@@ -605,9 +606,14 @@ public class TaskListView implements Serializable {
                         if (bufferHttpResponse.statusCode() == 200) {
                             return bufferHttpResponse.bodyAsJsonObject();
                         } else {
+                            MultiMap headers = bufferHttpResponse.headers();
+                            headers.names()
+                                    .forEach(header -> {
+                                        LOG.info(header + ": " + headers.get(header));
+                                    });
                             return new JsonObject()
                                     .put("code", bufferHttpResponse.statusCode())
-                                    .put("message", bufferHttpResponse.bodyAsString());
+                                    .put("message", bufferHttpResponse.getHeader("etag"));
                         }
                     });
             JsonObject resultObject = result.await()
