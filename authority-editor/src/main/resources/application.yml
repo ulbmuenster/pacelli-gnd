@@ -11,9 +11,12 @@ quarkus:
   container-image:
     build: true
     push: true
-    group: wwuulb
+    group: wwu-ulb
+    registry: harbor.uni-muenster.de
+    username: robot$wwu-ulb+wwuulb-push
     name: marc-authority-editor
-    registry: ulb.wwu.io
+  jib:
+    jvm-entrypoint: java,-Djava.util.logging.manager=org.jboss.logmanager.LogManager,-Djavax.net.ssl.trustStore=/keystore/cacerts,-Djavax.net.ssl.trustStorePassword=changeit,-jar,quarkus-run.jar
   http:
     non-application-root-path: /authority-editor/q
     port: 8080
@@ -56,7 +59,7 @@ quarkus:
       enabled: true
       dir-context:
         principal: ulbdzal@wwu
-        url: ldap://wwu.de
+        url: ldaps://wwu.de:636
         password: xyz
       identity-mapping:
         rdn-identifier: cn
